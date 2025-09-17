@@ -2,10 +2,25 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Line } from "react-chartjs-2";
-import { Chart, LineElement, LinearScale, CategoryScale, PointElement, Legend, Tooltip } from "chart.js";
+import {
+  Chart,
+  LineElement,
+  LinearScale,
+  CategoryScale,
+  PointElement,
+  Legend,
+  Tooltip,
+} from "chart.js";
 import { useWS } from "@/hooks/useWS";
 
-Chart.register(LineElement, LinearScale, CategoryScale, PointElement, Legend, Tooltip);
+Chart.register(
+  LineElement,
+  LinearScale,
+  CategoryScale,
+  PointElement,
+  Legend,
+  Tooltip
+);
 
 export default function Dashboard() {
   const { data } = useWS(); // {type:'telemetry', data:{distance_cm, pwm, ts...}}
@@ -40,12 +55,13 @@ export default function Dashboard() {
 
   return (
     <main className="min-h-dvh bg-gray-50">
-      
       <header className="sticky top-0 z-10 bg-white/80 backdrop-blur border-b border-gray-200">
         <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-semibold">Robot Workcell Dashboard</h1>
-            <p className="text-sm text-gray-500">Real-time sensing & control • STM32 • Next.js</p>
+            <p className="text-sm text-gray-500">
+              Real-time sensing & control • STM32 • Next.js
+            </p>
           </div>
           <span className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-3 py-1 text-xs text-gray-600">
             <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -86,10 +102,18 @@ export default function Dashboard() {
   );
 }
 
-function Card(props: { title?: string; children: React.ReactNode; className?: string }) {
+function Card(props: {
+  title?: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
   const { title, children, className } = props;
   return (
-    <div className={`rounded-2xl border border-gray-200 bg-white shadow-sm ${className || ""}`}>
+    <div
+      className={`rounded-2xl border border-gray-200 bg-white shadow-sm ${
+        className || ""
+      }`}
+    >
       {title && (
         <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
           <h2 className="text-sm font-medium text-gray-700">{title}</h2>
@@ -100,17 +124,27 @@ function Card(props: { title?: string; children: React.ReactNode; className?: st
   );
 }
 
-function StatusCards({ lastDist, lastPwm }: { lastDist?: number; lastPwm?: number }) {
+function StatusCards({
+  lastDist,
+  lastPwm,
+}: {
+  lastDist?: number;
+  lastPwm?: number;
+}) {
   return (
     <div className="grid sm:grid-cols-2 gap-4">
       <div className="rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 p-4">
         <div className="text-xs text-blue-700/80">Latest Distance</div>
-        <div className="mt-1 text-3xl font-semibold text-blue-900">{lastDist ?? "—"}</div>
+        <div className="mt-1 text-3xl font-semibold text-blue-900">
+          {lastDist ?? "—"}
+        </div>
         <div className="text-xs text-blue-700/60 mt-1">cm</div>
       </div>
       <div className="rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 p-4">
         <div className="text-xs text-emerald-700/80">Current PWM</div>
-        <div className="mt-1 text-3xl font-semibold text-emerald-900">{lastPwm ?? "—"}</div>
+        <div className="mt-1 text-3xl font-semibold text-emerald-900">
+          {lastPwm ?? "—"}
+        </div>
         <div className="text-xs text-emerald-700/60 mt-1">0–180</div>
       </div>
     </div>
@@ -122,7 +156,9 @@ function Button(props: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
       {...rest}
-      className={`inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm hover:bg-gray-50 active:scale-[0.99] disabled:opacity-50 ${className || ""}`}
+      className={`inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm hover:bg-gray-50 active:scale-[0.99] disabled:opacity-50 ${
+        className || ""
+      }`}
     />
   );
 }
@@ -132,7 +168,9 @@ function PrimaryButton(props: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
       {...rest}
-      className={`inline-flex items-center justify-center rounded-lg bg-indigo-600 text-white px-3 py-2 text-sm hover:bg-indigo-500 active:scale-[0.99] disabled:opacity-50 ${className || ""}`}
+      className={`inline-flex items-center justify-center rounded-lg bg-indigo-600 text-white px-3 py-2 text-sm hover:bg-indigo-500 active:scale-[0.99] disabled:opacity-50 ${
+        className || ""
+      }`}
     />
   );
 }
@@ -142,7 +180,9 @@ function DangerButton(props: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
       {...rest}
-      className={`inline-flex items-center justify-center rounded-lg bg-rose-600 text-white px-3 py-2 text-sm hover:bg-rose-500 active:scale-[0.99] disabled:opacity-50 ${className || ""}`}
+      className={`inline-flex items-center justify-center rounded-lg bg-rose-600 text-white px-3 py-2 text-sm hover:bg-rose-500 active:scale-[0.99] disabled:opacity-50 ${
+        className || ""
+      }`}
     />
   );
 }
@@ -187,7 +227,9 @@ function Controls() {
       {/* PWM */}
       <div>
         <div className="flex items-center justify-between">
-          <label className="text-sm font-medium text-gray-700">Speed (PWM)</label>
+          <label className="text-sm font-medium text-gray-700">
+            Speed (PWM)
+          </label>
           <span className="text-xs text-gray-500">{pwm}</span>
         </div>
         <input
@@ -229,7 +271,9 @@ function Controls() {
       {/* Lock */}
       <div>
         <div className="flex items-center justify-between">
-          <label className="text-sm font-medium text-gray-700">Lock (deg)</label>
+          <label className="text-sm font-medium text-gray-700">
+            Lock (deg)
+          </label>
           <span className="text-xs text-gray-500">{lock}</span>
         </div>
         <input
@@ -262,7 +306,8 @@ function Logs() {
 
   const badge = (lv: string) => {
     if (lv === "error") return "bg-rose-100 text-rose-700 ring-1 ring-rose-200";
-    if (lv === "warn") return "bg-amber-100 text-amber-700 ring-1 ring-amber-200";
+    if (lv === "warn")
+      return "bg-amber-100 text-amber-700 ring-1 ring-amber-200";
     return "bg-gray-100 text-gray-700 ring-1 ring-gray-200";
     // info
   };
@@ -272,24 +317,40 @@ function Logs() {
       <table className="min-w-full divide-y divide-gray-200 bg-white text-sm">
         <thead className="bg-gray-50">
           <tr>
-            <th className="py-2 pl-4 pr-2 text-left font-medium text-gray-600">ts</th>
-            <th className="px-2 py-2 text-left font-medium text-gray-600">level</th>
-            <th className="px-2 py-2 text-left font-medium text-gray-600">action</th>
-            <th className="px-2 py-2 text-left font-medium text-gray-600">payload</th>
+            <th className="py-2 pl-4 pr-2 text-left font-medium text-gray-600">
+              ts
+            </th>
+            <th className="px-2 py-2 text-left font-medium text-gray-600">
+              level
+            </th>
+            <th className="px-2 py-2 text-left font-medium text-gray-600">
+              action
+            </th>
+            <th className="px-2 py-2 text-left font-medium text-gray-600">
+              payload
+            </th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
           {rows.map((r) => (
             <tr key={r.id} className="hover:bg-gray-50">
-              <td className="py-2 pl-4 pr-2 tabular-nums text-gray-700">{r.ts}</td>
+              <td className="py-2 pl-4 pr-2 tabular-nums text-gray-700">
+                {r.ts}
+              </td>
               <td className="px-2 py-2">
-                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs ${badge(r.level)}`}>
+                <span
+                  className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs ${badge(
+                    r.level
+                  )}`}
+                >
                   {r.level}
                 </span>
               </td>
               <td className="px-2 py-2 text-gray-700">{r.action}</td>
               <td className="px-2 py-2">
-                <pre className="whitespace-pre-wrap text-gray-600">{r.payload}</pre>
+                <pre className="whitespace-pre-wrap text-gray-600">
+                  {r.payload}
+                </pre>
               </td>
             </tr>
           ))}
