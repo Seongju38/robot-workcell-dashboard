@@ -1,4 +1,5 @@
 /***** 로그 조회 (GET) *****/
+import "@/lib/ws-hub";
 
 import { NextResponse } from "next/server";
 import { getLogs } from "@/lib/logger";

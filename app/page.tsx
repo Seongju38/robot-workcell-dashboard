@@ -23,10 +23,6 @@ Chart.register(
 );
 
 export default function Dashboard() {
-  useEffect(() => {
-    fetch("/api/_boot").catch(() => {});
-  }, []);
-
   const { data } = useWS(); // {type:'telemetry', data:{distance_cm, pwm, ts...}}
 
   const [dist, setDist] = useState<number[]>([]);
