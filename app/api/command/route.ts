@@ -2,6 +2,8 @@
 
 import { NextResponse } from "next/server";
 import { logRow } from "@/lib/logger";
+import { sendCommand } from "@/lib/serial"; // 시리얼 브릿지 사용
+import { broadcast } from "@/lib/ws-hub"; // (선택) 서버도 WS로 알림
 
 const ALLOWED = new Set(["led", "set_speed", "direction", "lock", "estop"]);
 
@@ -11,38 +13,39 @@ export async function POST(req: Request) {
     const { type, ...rest } = body || {};
 
     if (!type || !ALLOWED.has(String(type))) {
-      logRow({
+      const row = logRow({
         level: "warn",
         action: "cmd.invalid",
         payload: body,
         status_code: 422,
       });
+      broadcast({ type: "log", row }); // 즉시 UI도 알림
       return NextResponse.json(
-        { message: "invalid command type", allow: [...ALLOWED] },
+        { message: "invalid command type", allow: [...ALLOWED], row },
         { status: 422 }
       );
     }
 
-    // (1단계) 시리얼 없음: DB에 로그만 남김
-    logRow({
-      level: "info",
+    // 시리얼로 실제 전송 (STM32는 JSON 라인으로 받도록)
+    const ok = sendCommand({ type, ...rest });
+
+    const row = logRow({
+      level: ok ? "info" : "error",
       action: `cmd.${type}`,
       payload: rest,
-      status_code: 202,
+      status_code: ok ? 202 : 500,
     });
 
-    // 프론트에서 바로 쓸 수 있게 echo
-    return NextResponse.json(
-      { ok: true, type, received: rest },
-      { status: 202 }
-    );
+    broadcast({ type: "log", row }); // 즉시 UI 반영
+    return NextResponse.json({ ok, row }, { status: ok ? 202 : 500 });
   } catch (err: any) {
-    logRow({
+    const row = logRow({
       level: "error",
       action: "cmd.exception",
       payload: { error: String(err) },
       status_code: 500,
     });
-    return NextResponse.json({ message: "server error" }, { status: 500 });
+    broadcast({ type: "log", row });
+    return NextResponse.json({ message: "server error", row }, { status: 500 });
   }
 }
