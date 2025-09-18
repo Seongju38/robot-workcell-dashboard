@@ -3,7 +3,6 @@
 import { NextResponse } from "next/server";
 import { logRow } from "@/lib/logger";
 
-// 허용되는 command 타입 (간단 검증)
 const ALLOWED = new Set(["led", "set_speed", "direction", "lock", "estop"]);
 
 export async function POST(req: Request) {
