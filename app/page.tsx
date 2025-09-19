@@ -23,7 +23,9 @@ Chart.register(
 );
 
 export default function Dashboard() {
-  const { data } = useWS(); // {type:'telemetry', data:{distance_cm, pwm, ts...}}
+  // const { data } = useWS(); // {type:'telemetry', data:{distance_cm, pwm, ts...}}
+
+  const { data, readyState } = useWS("ws://localhost:7072");
 
   const [dist, setDist] = useState<number[]>([]);
   const [pwm, setPwm] = useState<number[]>([]);
@@ -31,11 +33,41 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (!data || data.type !== "telemetry") return;
+
+    // 필드명/단위 매핑
+    // distance_mm → cm로 변환
+    const mm = Number(data.data.distance_mm);
+    const cm = Number.isFinite(mm) ? Math.round((mm / 10) * 10) / 10 : null; // 0.1 cm 단위
+
+    // servo_us(500~2500us) → 0~180도로 변환
+    const us = Number(data.data.servo_us);
+    const deg = Number.isFinite(us)
+      ? Math.max(0, Math.min(180, Math.round(((us - 500) * 180) / 2000)))
+      : null;
+
     const t = new Date(data.data.ts || Date.now()).toLocaleTimeString();
     setLabels((l) => [...l.slice(-99), t]);
-    setDist((d) => [...d.slice(-99), data.data.distance_cm]);
-    setPwm((d) => [...d.slice(-99), data.data.pwm]);
+    setDist((d) => [...d.slice(-99), cm ?? (null as any)]);
+    setPwm((d) => [...d.slice(-99), deg ?? (null as any)]);
   }, [data]);
+
+  const commonOpts = useMemo(
+    () => ({
+      animation: false,
+      responsive: true,
+      maintainAspectRatio: false, // 부모 div 높이(h-64) 사용
+      plugins: { legend: { display: true }, tooltip: { intersect: false } },
+      scales: {
+        y: { beginAtZero: true, ticks: { precision: 0 } },
+        x: { ticks: { maxRotation: 0, autoSkip: true } },
+      },
+      elements: {
+        point: { radius: 0 },
+        line: { borderWidth: 2, tension: 0.2 },
+      },
+    }),
+    []
+  );
 
   const distChart = useMemo(
     () => ({
@@ -78,12 +110,12 @@ export default function Dashboard() {
         <section className="grid md:grid-cols-2 gap-6">
           <Card title="Distance (cm)">
             <div className="h-64">
-              <Line data={distChart} />
+              <Line data={distChart} options={commonOpts} />
             </div>
           </Card>
           <Card title="Speed (PWM)">
             <div className="h-64">
-              <Line data={pwmChart} />
+              <Line data={pwmChart} options={commonOpts} />
             </div>
           </Card>
         </section>
